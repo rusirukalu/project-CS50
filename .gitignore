@@ -1,0 +1,48 @@
+# Root-level ignores
+.DS_Store
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Backend-specific (Python/Flask)
+backend/__pycache__/
+backend/*.py[cod]
+backend/*.pyo
+backend/*.pyd
+backend/.env
+backend/.env.local
+backend/instance/
+backend/*.db
+backend/*.sqlite
+backend/*.sqlite3
+backend/static/uploads/
+backend/*.log
+backend/venv/
+backend/env/
+backend/.virtualenv/
+backend/.coverage
+backend/coverage.xml
+backend/*.cover
+backend/htmlcov/
+backend/.pytest_cache/
+
+# Frontend-specific (Node.js/Vite/React)
+frontend/node_modules/
+frontend/dist/
+frontend/dist-ssr/
+frontend/.env
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+frontend/*.log
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/vite.config.js.timestamp-*
+frontend/vite.config.ts.timestamp-*
+frontend/.eslintcache
+frontend/*.css.map
+
+# Keep source files and configs tracked (no need to list explicitly, just don't ignore them)
