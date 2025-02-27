@@ -27,7 +27,7 @@ const PortfolioContent = () => {
   const { portfolio, stats, userDetails, loading, error } = state;
   
   const aboutRef = useRef(null);
-  const projectsRef = useRef(null);
+  // const projectsRef = useRef(null);
   const statsRef = useRef(null);
 
   useEffect(() => {
@@ -113,14 +113,14 @@ const PortfolioContent = () => {
   };
 
   // Helper function to get status color from Projects.jsx
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'active': return 'bg-blue-100 text-blue-800';
-      case 'completed': return 'bg-green-100 text-green-800';
-      case 'cancelled': return 'bg-red-100 text-red-800';
-      default: return 'bg-amber-100 text-amber-800';
-    }
-  };
+  // const getStatusColor = (status) => {
+  //   switch (status) {
+  //     case 'active': return 'bg-blue-100 text-blue-800';
+  //     case 'completed': return 'bg-green-100 text-green-800';
+  //     case 'cancelled': return 'bg-red-100 text-red-800';
+  //     default: return 'bg-amber-100 text-amber-800';
+  //   }
+  // };
 
   if (loading) {
     return (
@@ -400,7 +400,7 @@ const PortfolioContent = () => {
       </section>
 
       {/* Projects Section (Attractive Visualization) */}
-      <section id="projects" ref={projectsRef} className="relative flex items-center justify-center min-h-screen mt-10 mb-10">
+      {/* <section id="projects" ref={projectsRef} className="relative flex items-center justify-center min-h-screen mt-10 mb-10">
         <div className="container px-6 mx-auto">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
@@ -472,7 +472,7 @@ const PortfolioContent = () => {
             )}
           </motion.div>
         </div>
-      </section>
+      </section> */}
 
       {/* Footer */}
       <footer className="py-12 bg-gray-600">

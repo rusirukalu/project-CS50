@@ -49,7 +49,7 @@ const Navbar = ({ portfolio, userDetails }) => {
     { id: 'hero', label: 'Home' },
     { id: 'about', label: 'About' },
     { id: 'stats', label: 'Stats' },
-    { id: 'projects', label: 'Projects' },
+    //{ id: 'projects', label: 'Projects' },
   ];
 
   return (
