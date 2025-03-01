@@ -31,13 +31,17 @@ const Login = () => {
       setError('');
       
       try {
-        await login(values.username, values.password);
+        const user = await login(values.username, values.password);
+        console.log('Login success:', user); // Debug log
         navigate('/');
       } catch (err) {
+        console.error('Login error:', err.response?.data);
         setError(
-          err.response?.data?.message || 
-          err.response?.data?.error || 
-          'Failed to log in. Please check your credentials and try again.'
+          err.response?.status === 401
+            ? 'Invalid username or password'
+            : err.response?.data?.message || 
+              err.response?.data?.error || 
+              'Failed to log in. Please try again.'
         );
       } finally {
         setLoading(false);
@@ -140,7 +144,7 @@ const Login = () => {
               </div>
               <div className="relative flex justify-center text-sm">
                 <span className="px-2 text-gray-500 bg-white">
-                  Don&apos;t have an account?
+                  Don't have an account?
                 </span>
               </div>
             </div>

@@ -1,7 +1,7 @@
 import os
 from flask import Flask, jsonify, request, make_response, send_from_directory
 from flask_cors import CORS
-from extensions import db, login_manager
+from extensions import db, login_manager  # Import db from extensions
 from config import Config
 from error_handlers import register_error_handlers
 from auth_middleware import init_auth_middleware
@@ -30,7 +30,7 @@ def create_app(config_class=Config):
     )
 
     # Initialize extensions
-    db.init_app(app)
+    db.init_app(app)  # Initialize db with the app instance
     login_manager.init_app(app)
     init_auth_middleware(app)
     

@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   axios.defaults.baseURL = '/';
-  axios.defaults.withCredentials = true; // Enable cookies for Flask-Login session
+  axios.defaults.withCredentials = true;
 
   useEffect(() => {
     if (token) {
@@ -29,7 +29,7 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const fetchUser = async () => {
-      if (token && !currentUser) { // Only fetch if no user is set
+      if (token) {
         try {
           const response = await axios.get('/api/auth/user');
           console.log('Fetched user on load:', response.data);
@@ -46,11 +46,13 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (username, password) => {
     try {
+      await logout(); // Clear previous state
       const response = await axios.post('/api/auth/login', { username, password });
       const { token: newToken, user } = response.data;
       localStorage.setItem('token', newToken);
       setToken(newToken);
       setCurrentUser(user);
+      console.log('Logged in user:', user);
       return user;
     } catch (error) {
       console.error('Login failed', error);
@@ -73,7 +75,13 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = () => {
+  const logout = async () => {
+    try {
+      await axios.post('/api/auth/logout');
+      console.log('Logout successful');
+    } catch (error) {
+      console.error('Logout request failed', error);
+    }
     localStorage.removeItem('token');
     setToken(null);
     setCurrentUser(null);

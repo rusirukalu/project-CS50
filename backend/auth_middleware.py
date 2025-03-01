@@ -1,21 +1,19 @@
 from flask import request, jsonify, current_app, g
-from flask_login import login_user
+from flask_login import login_user, logout_user
 from werkzeug.local import LocalProxy
 from functools import wraps
 import jwt
 from datetime import datetime, timedelta
 from models.user import User
+import logging
 
-# Proxy to get the current user without circular imports
 current_user = LocalProxy(lambda: g.get('_current_user', None))
 
 def _get_current_user():
     """Get the current user from the JWT token in request header"""
-    if hasattr(g, '_current_user'):
-        return g._current_user
-    
     auth_header = request.headers.get('Authorization')
     if not auth_header or not auth_header.startswith('Bearer '):
+        logging.debug("No valid Authorization header found")
         return None
     
     token = auth_header.split(' ')[1]
@@ -28,18 +26,25 @@ def _get_current_user():
         )
         exp_timestamp = payload.get('exp')
         if exp_timestamp and datetime.utcfromtimestamp(exp_timestamp) < datetime.utcnow():
+            logging.debug("Token expired")
             return None
         
         user_id = payload.get('sub')
         if user_id is None:
+            logging.debug("No user_id in token payload")
             return None
         
         user = User.query.get(user_id)
         if user:
-            login_user(user)  # Sync Flask-Login with JWT
+            logout_user()  # Clear any existing session
+            login_user(user)
             g._current_user = user
+            logging.debug(f"Synced user from token: {user.username}")
+        else:
+            logging.debug(f"No user found for ID: {user_id}")
         return user
-    except jwt.InvalidTokenError:
+    except jwt.InvalidTokenError as e:
+        logging.debug(f"Invalid token: {str(e)}")
         return None
 
 def generate_token(user_id):
@@ -49,11 +54,12 @@ def generate_token(user_id):
         'iat': datetime.utcnow(),
         'sub': user_id
     }
-    return jwt.encode(
+    token = jwt.encode(
         payload,
         current_app.config.get('SECRET_KEY'),
         algorithm='HS256'
     )
+    return token
 
 def jwt_required(f):
     """Decorator to protect routes with JWT authentication"""

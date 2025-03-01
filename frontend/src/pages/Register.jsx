@@ -63,14 +63,18 @@ const Register = () => {
       
       try {
         const user = await register(userData);
-        console.log('Registration success:', user);
+        console.log('Registration success:', user); // Already present, kept for consistency
         navigate('/');
       } catch (err) {
-        console.error('Register error:', err.response);
+        console.error('Register error:', err.response?.data);
         setError(
-          err.response?.data?.error || 
-          err.response?.data?.message || 
-          'Failed to register. Please try again.'
+          err.response?.status === 400 && err.response?.data?.error === 'Username already taken'
+            ? 'Username is already taken'
+            : err.response?.status === 400 && err.response?.data?.error === 'Email already registered'
+            ? 'Email is already registered'
+            : err.response?.data?.error || 
+              err.response?.data?.message || 
+              'Failed to register. Please try again.'
         );
       } finally {
         setLoading(false);

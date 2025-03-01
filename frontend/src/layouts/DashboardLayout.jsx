@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'; // Added useEffect
+import { useState, useEffect } from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { 
@@ -10,25 +10,34 @@ const DashboardLayout = () => {
   const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  
-  // Sync profile image with currentUser on mount/update
+  const [showLogoutModal, setShowLogoutModal] = useState(false); // State for logout confirmation modal
+
   useEffect(() => {
     // No action needed here; currentUser updates via AuthContext
   }, [currentUser]);
 
   const handleLogout = () => {
+    setShowLogoutModal(true); // Show the confirmation modal
+  };
+
+  const confirmLogout = () => {
     logout();
     navigate('/login');
+    setShowLogoutModal(false); // Close the modal after logout
   };
-  
+
+  const cancelLogout = () => {
+    setShowLogoutModal(false); // Close the modal without logging out
+  };
+
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
-  
+
   const closeSidebar = () => {
     setSidebarOpen(false);
   };
-  
+
   const navLinks = [
     { path: '/', name: 'Dashboard', icon: <FiHome className="w-5 h-5" /> },
     { path: '/projects', name: 'Projects', icon: <FiFolder className="w-5 h-5" /> },
@@ -38,7 +47,7 @@ const DashboardLayout = () => {
     { path: '/documents', name: 'Documents', icon: <FiFile className="w-5 h-5" /> },
     { path: '/settings', name: 'Settings', icon: <FiSettings className="w-5 h-5" /> },
   ];
-  
+
   return (
     <div className="flex h-screen bg-gray-100">
       {/* Mobile sidebar backdrop */}
@@ -73,7 +82,11 @@ const DashboardLayout = () => {
             <div className="relative w-10 h-10 overflow-hidden bg-gray-200 rounded-full">
               {currentUser?.profile_image ? (
                 <img 
-                  src={currentUser.profile_image.startsWith('http') ? currentUser.profile_image : `http://localhost:5001${currentUser.profile_image}`} 
+                  src={
+                    currentUser.profile_image.startsWith('http') 
+                      ? currentUser.profile_image 
+                      : `http://localhost:5001${currentUser.profile_image}`
+                  } 
                   alt="Profile" 
                   className="object-cover w-full h-full"
                   onError={(e) => {
@@ -148,6 +161,30 @@ const DashboardLayout = () => {
           <Outlet />
         </main>
       </div>
+
+      {/* Logout Confirmation Modal */}
+      {showLogoutModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="p-6 bg-white rounded-lg shadow-lg w-96">
+            <h3 className="text-lg font-semibold text-gray-800">Confirm Logout</h3>
+            <p className="mt-2 text-gray-600">Are you sure you want to log out?</p>
+            <div className="flex justify-end mt-6 space-x-3">
+              <button
+                onClick={cancelLogout}
+                className="px-4 py-2 text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmLogout}
+                className="px-4 py-2 text-white rounded-md bg-primary-600 hover:bg-primary-700"
+              >
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

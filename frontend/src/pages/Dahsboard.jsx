@@ -40,13 +40,17 @@ const Dashboard = () => {
           invoices: invoicesRes.data
         };
         
-        console.log('Fetched stats:', newStats);
+        console.log('Dashboard fetched stats:', newStats); // Debug log
         setStats(newStats);
         setLoading(false);
       } catch (err) {
         console.error('Dashboard data error:', err);
         console.error('Error response:', err.response?.data);
-        setError('Failed to load dashboard data');
+        if (err.response?.status === 401) {
+          setError('Session expired. Please log in again.');
+        } else {
+          setError('Failed to load dashboard data');
+        }
         setLoading(false);
       }
     };
@@ -343,7 +347,7 @@ const Dashboard = () => {
                 <div>
                   <h3 className="font-medium text-amber-800">Unbilled Hours</h3>
                   <p className="mt-1 text-sm text-amber-700">
-                    You have {stats.time.billable_hours.toFixed(1)} billable hours that haven&apos;t been invoiced.
+                    You have {stats.time.billable_hours.toFixed(1)} billable hours that haven't been invoiced.
                   </p>
                   <Link 
                     to="/invoices" 
